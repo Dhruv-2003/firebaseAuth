@@ -20,6 +20,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   signInWithEmailAndPassword,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -65,7 +66,7 @@ const q = query(colRef, orderBy("createdAt"));
 //   console.log(books);
 // });
 
-onSnapshot(q, (snapshot) => {
+const unSubCol = onSnapshot(q, (snapshot) => {
   let books = [];
 
   snapshot.docs.forEach((doc) => {
@@ -105,7 +106,7 @@ const docRef = doc(db, "books", "z9anqqzLqvfWer5HewNP");
 //   console.log(doc.data(), doc.id);
 // });
 
-onSnapshot(docRef, (doc) => {
+const unSubDoc = onSnapshot(docRef, (doc) => {
   console.log(doc.data(), doc.id);
 });
 
@@ -163,4 +164,16 @@ loginForm.addEventListener("submit", (e) => {
     .catch((error) => {
       console.log(error.message);
     });
+});
+
+const unSubAuth = onAuthStateChanged(auth, (user) => {
+  console.log("user status changed :", user);
+});
+
+const unsubButton = document.querySelector(".unsub");
+unsubButton.addEventListener("click", (e) => {
+  console.log("unsubscribing");
+  unSubAuth();
+  unSubCol();
+  unSubDoc();
 });
